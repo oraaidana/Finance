@@ -8,10 +8,14 @@
 import SwiftUI
 
 @main
-struct financeApp: App {
+// FinanceApp.swift
+struct  financeApp: App {
+    @StateObject private var dataManager = SharedDataManager()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(dataManager)
         }
     }
 }
