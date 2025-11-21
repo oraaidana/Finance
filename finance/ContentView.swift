@@ -37,6 +37,11 @@ struct ContentView: View {
                     Image(systemName: "gear")
                     Text("Chat")
                 }
+            AccountView()
+                .tabItem {
+                Image(systemName: "star")
+                Text("Account")
+            }
         }
         .accentColor(.blue) // Primary color
         

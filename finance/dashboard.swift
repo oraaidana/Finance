@@ -157,7 +157,7 @@ struct CategorySpending: Identifiable {
     }
 }
 
-// MARK: - Category Row (FIXED - removed dataManager dependency)
+// MARK: - Category Row 
 struct CategoryRow: View {
     let categorySpending: CategorySpending
     let isLast: Bool

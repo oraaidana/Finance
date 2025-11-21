@@ -212,13 +212,6 @@ struct BudgetView: View {
     }
 }
 
-// MARK: - Update your App file to inject the shared data
-// In your FinanceApp.swift file, add:
-// @StateObject private var dataManager = SharedDataManager()
-//
-// And modify your ContentView to:
-// .environmentObject(dataManager)
-
 // MARK: - Stat Card
 struct StatCard: View {
     let title: String

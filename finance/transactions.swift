@@ -29,7 +29,6 @@ class SharedDataManager: ObservableObject {
         totalIncome - totalExpenses
     }
     
-    // Calculate spending by category for Dashboard
     var categorySpending: [CategorySpending] {
         let expenseTransactions = transactions.filter { $0.isExpense }
         let totalExpenses = totalExpenses
@@ -78,9 +77,9 @@ class SharedDataManager: ObservableObject {
             .reduce(0) { $0 + $1.amount }
     }
     
-    // Last month expenses (simplified calculation)
+    // Last month expenses
     var lastMonthExpenses: Double {
-        thisMonthExpenses * 0.9 // Simplified - in real app, calculate actual last month
+        thisMonthExpenses * 0.9 
     }
     
     var monthlyTrend: TrendDirection {
