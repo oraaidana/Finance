@@ -12,10 +12,6 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        HStack {
-            Spacer()
-            Image(systemName: "star.fill").ignoresSafeArea()
-        }
         TabView {
             // Main financial dashboard
             DashboardView()
