@@ -282,7 +282,7 @@ enum TransactionCategory2: String, CaseIterable {
         case .health: return .pink
         case .transport: return .blue
         case .housing: return .green
-        case .subscriptions: return .red
+        case .subscriptions: return .yellow
         }
     }
 }

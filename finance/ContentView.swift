@@ -54,6 +54,5 @@ struct DashboardView_Previews: PreviewProvider {
     }
 }
 #Preview {
-    ContentView().environmentObject(SharedDataManager()) // Add this line to provide the environment object
-
+    ContentView().environmentObject(SharedDataManager())
 }

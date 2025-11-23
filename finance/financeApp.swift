@@ -11,11 +11,13 @@ import SwiftUI
 // FinanceApp.swift
 struct  financeApp: App {
     @StateObject private var dataManager = SharedDataManager()
-    
+    //@StateObject private var authManager = AuthManager()
+
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environmentObject(dataManager)
+                //.environmentObject(authManager)
         }
     }
 }
