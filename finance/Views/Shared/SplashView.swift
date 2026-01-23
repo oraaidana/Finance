@@ -15,13 +15,13 @@ struct SplashView: View {
     var body: some View {
         ZStack {
             // Background color - can be white or a gradient
-            Color.white
+            Color.appCardBackground
                 .ignoresSafeArea()
-            
+
             // Dollar icon in the middle with animation
             Image(systemName: "dollarsign.circle.fill")
                 .font(.system(size: 100, weight: .medium))
-                .foregroundColor(.blue)
+                .foregroundColor(.appPrimary)
                 .opacity(opacity)
                 .scaleEffect(scale)
                 .rotationEffect(.degrees(rotation))

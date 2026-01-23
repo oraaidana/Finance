@@ -10,6 +10,21 @@ import SwiftUI
 struct ProfileView: View {
     @StateObject private var authManager = AuthManager.shared
 
+    private var displayName: String {
+        let name = authManager.currentUser?.name ?? ""
+        return name.isEmpty ? "User" : name
+    }
+
+    private var avatarInitial: String {
+        let name = authManager.currentUser?.name ?? ""
+        if name.isEmpty {
+            // Use first letter of email if no name
+            let email = authManager.currentUser?.email ?? ""
+            return String(email.prefix(1)).uppercased()
+        }
+        return String(name.prefix(1)).uppercased()
+    }
+
     var body: some View {
         NavigationView {
             List {
@@ -18,16 +33,16 @@ struct ProfileView: View {
                     HStack(spacing: 16) {
                         // Avatar
                         Circle()
-                            .fill(Color.blue.opacity(0.2))
+                            .fill(Color.appPrimary.opacity(0.2))
                             .frame(width: 70, height: 70)
                             .overlay(
-                                Text((authManager.currentUser?.name.prefix(1).uppercased()) ?? "U")
+                                Text(avatarInitial)
                                     .font(.system(size: 28, weight: .semibold))
-                                    .foregroundColor(.blue)
+                                    .foregroundColor(.appPrimary)
                             )
 
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(authManager.currentUser?.name ?? "User")
+                            Text(displayName)
                                 .font(.title2)
                                 .fontWeight(.semibold)
 
@@ -44,7 +59,7 @@ struct ProfileView: View {
                 // Account Settings Section
                 Section {
                     NavigationLink(destination: EditProfileView()) {
-                        SettingsRow(icon: "person.fill", title: "Edit Profile", color: .blue)
+                        SettingsRow(icon: "person.fill", title: "Edit Profile", color: .appPrimary)
                     }
 
                     NavigationLink(destination: SettingsView()) {
@@ -52,7 +67,7 @@ struct ProfileView: View {
                     }
 
                     NavigationLink(destination: PlaceholderView(title: "Notifications")) {
-                        SettingsRow(icon: "bell.fill", title: "Notifications", color: .orange)
+                        SettingsRow(icon: "bell.fill", title: "Notifications", color: .appWarning)
                     }
                 } header: {
                     Text("Settings")
@@ -61,7 +76,7 @@ struct ProfileView: View {
                 // Support Section
                 Section {
                     NavigationLink(destination: PlaceholderView(title: "Privacy & Security")) {
-                        SettingsRow(icon: "lock.fill", title: "Privacy & Security", color: .green)
+                        SettingsRow(icon: "lock.fill", title: "Privacy & Security", color: .appSuccess)
                     }
 
                     NavigationLink(destination: PlaceholderView(title: "Help & Support")) {
@@ -69,7 +84,7 @@ struct ProfileView: View {
                     }
 
                     NavigationLink(destination: AboutView()) {
-                        SettingsRow(icon: "info.circle.fill", title: "About", color: .gray)
+                        SettingsRow(icon: "info.circle.fill", title: "About", color: .appTextSecondary)
                     }
                 } header: {
                     Text("Support")
@@ -84,7 +99,7 @@ struct ProfileView: View {
                             Spacer()
                             Text("Logout")
                                 .font(.system(size: 17, weight: .semibold))
-                                .foregroundColor(.red)
+                                .foregroundColor(.appError)
                             Spacer()
                         }
                     }

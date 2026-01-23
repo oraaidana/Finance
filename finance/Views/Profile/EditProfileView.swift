@@ -23,12 +23,12 @@ struct EditProfileView: View {
                 HStack {
                     Spacer()
                     Circle()
-                        .fill(Color.blue.opacity(0.2))
+                        .fill(Color.appPrimary.opacity(0.2))
                         .frame(width: 100, height: 100)
                         .overlay(
                             Text(name.prefix(1).uppercased())
                                 .font(.system(size: 40, weight: .semibold))
-                                .foregroundColor(.blue)
+                                .foregroundColor(.appPrimary)
                         )
                     Spacer()
                 }
@@ -39,7 +39,7 @@ struct EditProfileView: View {
             Section {
                 TextField("Display Name", text: $name)
                     .textContentType(.name)
-                    .autocapitalization(.words)
+                    .textInputAutocapitalization(.words)
 
                 HStack {
                     Text("Email")
@@ -85,12 +85,21 @@ struct EditProfileView: View {
     private func saveProfile() {
         isSaving = true
 
-        // TODO: Implement profile update via Firebase
-        // For now, simulate a save
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            isSaving = false
-            alertMessage = "Profile updated successfully!"
-            showAlert = true
+        Task {
+            do {
+                try await authManager.updateDisplayName(name)
+                await MainActor.run {
+                    isSaving = false
+                    alertMessage = "Profile updated successfully!"
+                    showAlert = true
+                }
+            } catch {
+                await MainActor.run {
+                    isSaving = false
+                    alertMessage = authManager.errorMessage ?? "Failed to update profile"
+                    showAlert = true
+                }
+            }
         }
     }
 }

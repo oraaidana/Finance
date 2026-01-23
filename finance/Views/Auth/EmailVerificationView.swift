@@ -16,7 +16,7 @@ struct EmailVerificationView: View {
     var body: some View {
         ZStack {
             // Background
-            Color(.systemGray6)
+            Color.appBackground
                 .ignoresSafeArea()
             
             ScrollView {
@@ -26,7 +26,7 @@ struct EmailVerificationView: View {
                         // Icon
                         Image(systemName: isVerified ? "checkmark.circle.fill" : "envelope.fill")
                             .font(.system(size: 80, weight: .light))
-                            .foregroundColor(isVerified ? .green : .blue)
+                            .foregroundColor(isVerified ? .appSuccess : .appPrimary)
                             .padding(.top, 40)
                         
                         // Title
@@ -66,7 +66,7 @@ struct EmailVerificationView: View {
                         if let errorMessage = authManager.errorMessage {
                             Text(errorMessage)
                                 .font(.system(size: 14))
-                                .foregroundColor(.red)
+                                .foregroundColor(.appError)
                                 .padding(.horizontal)
                                 .multilineTextAlignment(.center)
                         }
@@ -75,7 +75,7 @@ struct EmailVerificationView: View {
                         if showResendSuccess {
                             Text("Verification email sent!")
                                 .font(.system(size: 14))
-                                .foregroundColor(.green)
+                                .foregroundColor(.appSuccess)
                                 .padding(.horizontal)
                                 .multilineTextAlignment(.center)
                         }
@@ -96,23 +96,23 @@ struct EmailVerificationView: View {
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 16)
-                                .background(Color.blue)
+                                .background(Color.appPrimary)
                                 .cornerRadius(12)
                             }
                             .padding(.top, 8)
                             .disabled(isChecking || authManager.isLoading)
                             .opacity((isChecking || authManager.isLoading) ? 0.6 : 1.0)
-                            
+
                             // Resend Email button
                             Button(action: {
                                 resendVerification()
                             }) {
                                 Text("Resend Verification Email")
                                     .font(.system(size: 16, weight: .medium))
-                                    .foregroundColor(.blue)
+                                    .foregroundColor(.appPrimary)
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 14)
-                                    .background(Color.blue.opacity(0.1))
+                                    .background(Color.appPrimary.opacity(0.1))
                                     .cornerRadius(12)
                             }
                             .disabled(authManager.isLoading)
@@ -127,7 +127,7 @@ struct EmailVerificationView: View {
                                     .foregroundColor(.white)
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 16)
-                                    .background(Color.blue)
+                                    .background(Color.appPrimary)
                                     .cornerRadius(12)
                             }
                             .padding(.top, 20)
@@ -135,7 +135,7 @@ struct EmailVerificationView: View {
                     }
                     .padding(.horizontal, 30)
                     .padding(.vertical, 40)
-                    .background(Color.white)
+                    .background(Color.appCardBackground)
                     .cornerRadius(20)
                     .padding(.horizontal, 20)
                     .padding(.top, 40)
@@ -147,7 +147,7 @@ struct EmailVerificationView: View {
             ToolbarItem(placement: .principal) {
                 Text("QarzhyAI")
                     .font(.system(size: 24, weight: .bold))
-                    .foregroundColor(Color(red: 0.0, green: 0.2, blue: 0.5))
+                    .foregroundColor(.appPrimary)
             }
         }
         .onAppear {

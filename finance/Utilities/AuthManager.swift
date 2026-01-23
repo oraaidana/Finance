@@ -237,5 +237,22 @@ class AuthManager: ObservableObject {
     func clearError() {
         errorMessage = nil
     }
+
+    /// Update user display name
+    @MainActor
+    func updateDisplayName(_ name: String) async throws {
+        isLoading = true
+        errorMessage = nil
+
+        do {
+            let updatedUser = try await authService.updateDisplayName(name)
+            self.currentUser = updatedUser
+            self.isLoading = false
+        } catch {
+            self.errorMessage = (error as? AuthError)?.errorDescription ?? error.localizedDescription
+            self.isLoading = false
+            throw error
+        }
+    }
 }
 

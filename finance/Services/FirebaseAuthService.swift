@@ -66,6 +66,7 @@ protocol AuthServiceProtocol {
     func checkEmailVerification() async throws -> Bool
     func getCurrentUser() -> User?
     func reloadUser() async throws
+    func updateDisplayName(_ name: String) async throws -> User
 }
 
 // MARK: - Firebase Auth Service Implementation
@@ -235,14 +236,39 @@ class FirebaseAuthService: AuthServiceProtocol {
         guard let user = auth.currentUser else {
             throw AuthError.userNotFound
         }
-        
+
         do {
             try await user.reload()
         } catch {
             throw AuthError.unknown(error)
         }
     }
-    
+
+    // MARK: - Update Display Name
+    func updateDisplayName(_ name: String) async throws -> User {
+        guard let user = auth.currentUser else {
+            throw AuthError.userNotFound
+        }
+
+        do {
+            let changeRequest = user.createProfileChangeRequest()
+            changeRequest.displayName = name
+            try await changeRequest.commitChanges()
+
+            // Reload user to get updated data
+            try await user.reload()
+
+            return User(
+                id: user.uid,
+                email: user.email ?? "",
+                name: user.displayName ?? name,
+                isEmailVerified: user.isEmailVerified
+            )
+        } catch {
+            throw AuthError.unknown(error)
+        }
+    }
+
     // MARK: - Helper Methods
     private func isValidEmail(_ email: String) -> Bool {
         let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"

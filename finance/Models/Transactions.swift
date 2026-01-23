@@ -9,13 +9,25 @@ import SwiftUI
 import Combine
 
 class SharedDataManager: ObservableObject {
-    @Published var transactions: [Transaction] = Transaction.sampleData
+    @Published var transactions: [Transaction] = []
     
     // Add transaction function
     func addTransaction(_ transaction: Transaction) {
         transactions.insert(transaction, at: 0)
     }
-    
+
+    // Delete transaction function
+    func deleteTransaction(_ transaction: Transaction) {
+        transactions.removeAll { $0.id == transaction.id }
+    }
+
+    // Update transaction function
+    func updateTransaction(_ transaction: Transaction) {
+        if let index = transactions.firstIndex(where: { $0.id == transaction.id }) {
+            transactions[index] = transaction
+        }
+    }
+
     // Calculate financial totals
     var totalIncome: Double {
         transactions.filter { !$0.isExpense }.reduce(0) { $0 + $1.amount }

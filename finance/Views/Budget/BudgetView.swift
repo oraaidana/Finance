@@ -9,19 +9,33 @@ import SwiftUI
 
 // MARK: - Transaction Model
 struct Transaction: Identifiable, Hashable {
-    let id = UUID()
+    let id: UUID
     let title: String
     let amount: Double
     let category: String
     let date: Date
     let type: TransactionType
     let isExpense: Bool
-    
+    let cardId: UUID?
+    let destinationCardId: UUID?
+
+    init(id: UUID = UUID(), title: String, amount: Double, category: String, date: Date, type: TransactionType, isExpense: Bool, cardId: UUID? = nil, destinationCardId: UUID? = nil) {
+        self.id = id
+        self.title = title
+        self.amount = amount
+        self.category = category
+        self.date = date
+        self.type = type
+        self.isExpense = isExpense
+        self.cardId = cardId
+        self.destinationCardId = destinationCardId
+    }
+
     var formattedAmount: String {
         let sign = isExpense ? "-" : "+"
-        return "\(sign)$\(abs(amount), default: "%.2f")"
+        return String(format: "%@₸%.0f", sign, abs(amount))
     }
-    
+
     var formattedDate: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMM d, yyyy"
@@ -36,13 +50,7 @@ enum TransactionType {
 
 // MARK: - Sample Data
 extension Transaction {
-    static let sampleData: [Transaction] = [
-        Transaction(title: "Monthly Salary", amount: 3500.00, category: "Transfer", date: Date().addingTimeInterval(-86400 * 2), type: .transfer, isExpense: false),
-        Transaction(title: "Netflix", amount: 15.99, category: "Subscriptions", date: Date().addingTimeInterval(-86400), type: .subscriptions, isExpense: true),
-        Transaction(title: "Grocery Shopping", amount: 89.50, category: "Shopping", date: Date().addingTimeInterval(-86400 * 3), type: .shopping, isExpense: true),
-        Transaction(title: "Electricity Bill", amount: 120.75, category: "Utilities", date: Date().addingTimeInterval(-86400 * 5), type: .utilities, isExpense: true),
-        Transaction(title: "Freelance Work", amount: 850.00, category: "Transfer", date: Date().addingTimeInterval(-86400 * 7), type: .transfer, isExpense: false)
-    ]
+    static let sampleData: [Transaction] = []
 }
 
 // MARK: - Transaction Category
@@ -106,84 +114,74 @@ enum ExpenseIncomeType {
 }
 
 // MARK: - Main Budget View
-//
-//  BudgetView.swift
-//  finance
-//
-//  Created by Aidana Orazbay on 11/20/25.
-//
-
-import SwiftUI
 
 struct BudgetView: View {
     @EnvironmentObject var dataManager: SharedDataManager
-    @State private var searchText: String = ""
-    @State private var showingAddTransaction = false
-    
-    var filteredTransactions: [Transaction] {
-        if searchText.isEmpty {
-            return dataManager.transactions
-        }
-        return dataManager.transactions.filter { $0.title.localizedCaseInsensitiveContains(searchText) }
+    @StateObject private var viewModel: BudgetViewModel
+
+    init(viewModel: BudgetViewModel? = nil) {
+        // Allow injection for testing, otherwise create with placeholder
+        // The actual dataManager binding happens in onAppear
+        _viewModel = StateObject(wrappedValue: viewModel ?? BudgetViewModel(dataManager: SharedDataManager()))
     }
-    
+
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 20) {
                     // Header
                     Divider()
-                    
+
                     // Quick Stats
                     HStack(spacing: 16) {
-                        StatCard(title: "Income", amount: dataManager.totalIncome, color: .green)
-                        StatCard(title: "Expenses", amount: dataManager.totalExpenses, color: .red)
-                        StatCard(title: "Balance", amount: dataManager.balance, color: .blue)
+                        StatCard(title: "Income", amount: dataManager.totalIncome, color: .appIncome)
+                        StatCard(title: "Expenses", amount: dataManager.totalExpenses, color: .appExpense)
+                        StatCard(title: "Balance", amount: dataManager.balance, color: .appPrimary)
                     }
-                    
+
                     Divider()
-                    
+
                     // Search Bar
                     VStack(alignment: .leading) {
                         Text("Search Transactions")
                             .font(.headline)
                             .padding(.horizontal)
-                        
+
                         HStack {
                             Image(systemName: "magnifyingglass")
-                                .foregroundColor(.gray)
-                            
-                            TextField("Search transactions...", text: $searchText)
+                                .foregroundColor(.appTextSecondary)
+
+                            TextField("Search transactions...", text: $viewModel.searchText)
                                 .textFieldStyle(PlainTextFieldStyle())
-                            
-                            if !searchText.isEmpty {
+
+                            if !viewModel.searchText.isEmpty {
                                 Button(action: {
-                                    searchText = ""
+                                    viewModel.clearSearch()
                                 }) {
                                     Image(systemName: "xmark.circle.fill")
-                                        .foregroundColor(.gray)
+                                        .foregroundColor(.appTextSecondary)
                                 }
                             }
                         }
                         .padding(12)
-                        .background(Color(.white))
+                        .background(Color.appCardBackground)
                         .cornerRadius(10)
                         .padding(.horizontal)
                     }
-                    
+
                     // Transactions List
                     VStack(alignment: .leading) {
                         LazyVStack(spacing: 12) {
-                            ForEach(filteredTransactions) { transaction in
+                            ForEach(viewModel.filteredTransactions) { transaction in
                                 TransactionRow(transaction: transaction)
                             }
                         }
                     }
                     .padding(.horizontal)
-                    
+
                     // Add Transaction Button
                     Button(action: {
-                        showingAddTransaction = true
+                        viewModel.showingAddTransaction = true
                     }) {
                         HStack {
                             Image(systemName: "plus.circle.fill")
@@ -193,7 +191,7 @@ struct BudgetView: View {
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.blue)
+                        .background(Color.appPrimary)
                         .cornerRadius(12)
                     }
                     .padding(.horizontal)
@@ -202,10 +200,10 @@ struct BudgetView: View {
                 .padding()
             }
             .navigationTitle("Financial Assistant")
-            .background(Color(.white))
-            .sheet(isPresented: $showingAddTransaction) {
+            .background(Color.appCardBackground)
+            .sheet(isPresented: $viewModel.showingAddTransaction) {
                 AddTransactionView { newTransaction in
-                    dataManager.addTransaction(newTransaction)
+                    viewModel.addTransaction(newTransaction)
                 }
             }
         }
@@ -237,151 +235,49 @@ struct StatCard: View {
 // MARK: - Transaction Row
 struct TransactionRow: View {
     let transaction: Transaction
-    
+
     var body: some View {
         HStack(spacing: 12) {
             // Category icon
-            Image(systemName: iconForCategory(transaction.type))
+            Image(systemName: BudgetViewModel.iconForCategory(transaction.type))
                 .font(.system(size: 18))
                 .foregroundColor(.white)
                 .frame(width: 36, height: 36)
-                .background(colorForCategory(transaction.type))
+                .background(BudgetViewModel.colorForCategory(transaction.type))
                 .cornerRadius(8)
-            
+
             // Transaction details
             VStack(alignment: .leading, spacing: 4) {
                 Text(transaction.title)
                     .font(.system(size: 16, weight: .medium))
                     .foregroundColor(.primary)
-                
+
                 Text(transaction.category)
                     .font(.system(size: 14))
                     .foregroundColor(.secondary)
             }
-            
+
             Spacer()
-            
+
             // Amount and date
             VStack(alignment: .trailing, spacing: 4) {
                 Text(transaction.formattedAmount)
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(transaction.isExpense ? .red : .green)
-                
+                    .foregroundColor(transaction.isExpense ? .appExpense : .appIncome)
+
                 Text(transaction.formattedDate)
                     .font(.system(size: 12))
                     .foregroundColor(.secondary)
             }
         }
         .padding()
-        .background(Color(.systemBackground))
+        .background(Color.appCardBackground)
         .cornerRadius(10)
-        .shadow(color: .gray.opacity(0.1), radius: 2)
-    }
-    
-    private func iconForCategory(_ type: TransactionType) -> String {
-        switch type {
-        case .transfer: return "arrow.left.arrow.right"
-        case .subscriptions: return "play.tv"
-        case .shopping: return "cart"
-        case .food: return "fork.knife"
-        case .entertainment: return "film"
-        case .utilities: return "bolt"
-        case .other: return "dollarsign.circle"
-        }
-    }
-    
-    private func colorForCategory(_ type: TransactionType) -> Color {
-        switch type {
-        case .transfer: return .blue.opacity(0.5)
-        case .subscriptions: return .purple.opacity(0.5)
-        case .shopping: return .orange.opacity(0.5)
-        case .food: return .green.opacity(0.5)
-        case .entertainment: return .pink.opacity(0.5)
-        case .utilities: return .yellow.opacity(0.5)
-        case .other: return .gray.opacity(0.5)
-        }
+        .shadow(color: .appShadow, radius: 2)
     }
 }
 
-// MARK: - Add Transaction View
-struct AddTransactionView: View {
-    @Environment(\.dismiss) private var dismiss
-    let onSave: (Transaction) -> Void
-    
-    @State private var title: String = ""
-    @State private var amount: String = ""
-    @State private var selectedCategory: TransactionCategory = .shopping
-    @State private var transactionType: ExpenseIncomeType = .expense
-    @State private var date: Date = Date()
-    
-    var body: some View {
-        NavigationView {
-            Form {
-                Section(header: Text("Transaction Details")) {
-                    TextField("Description", text: $title)
-                    HStack {
-                        Text("Amount")
-                        Spacer()
-                        TextField("0.00", text: $amount)
-                            .keyboardType(.decimalPad)
-                            .multilineTextAlignment(.trailing)
-                    }
-                    
-                    Picker("Type", selection: $transactionType) {
-                        Text("Expense").tag(ExpenseIncomeType.expense)
-                        Text("Income").tag(ExpenseIncomeType.income)
-                    }
-                    .pickerStyle(SegmentedPickerStyle())
-                    
-                    Picker("Category", selection: $selectedCategory) {
-                        ForEach(TransactionCategory.allCases, id: \.self) { category in
-                            HStack {
-                                Image(systemName: category.iconName)
-                                    .foregroundColor(category.color)
-                                Text(category.rawValue)
-                            }
-                            .tag(category)
-                        }
-                    }
-                    
-                    DatePicker("Date", selection: $date, displayedComponents: .date)
-                }
-            }
-            .navigationTitle("Add Transaction")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
-                }
-                
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Save") {
-                        saveTransaction()
-                    }
-                    .disabled(title.isEmpty || amount.isEmpty || Double(amount) == nil)
-                }
-            }
-        }
-    }
-    
-    private func saveTransaction() {
-        guard let amountValue = Double(amount) else { return }
-        
-        let transaction = Transaction(
-            title: title.isEmpty ? selectedCategory.rawValue : title,
-            amount: amountValue,
-            category: selectedCategory.rawValue,
-            date: date,
-            type: selectedCategory.toTransactionType(),
-            isExpense: transactionType == .expense
-        )
-        
-        onSave(transaction)
-        dismiss()
-    }
-}
+// NOTE: AddTransactionView has been moved to Views/Home/AddTransactionView.swift
 
 #Preview {
     BudgetView()

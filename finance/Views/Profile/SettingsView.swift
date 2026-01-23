@@ -40,17 +40,17 @@ struct ThemeOption: View {
         }) {
             HStack {
                 Image(systemName: icon)
-                    .foregroundColor(selectedValue == value ? .blue : .secondary)
+                    .foregroundColor(selectedValue == value ? .appPrimary : .appTextSecondary)
                     .frame(width: 24)
 
                 Text(title)
-                    .foregroundColor(.primary)
+                    .foregroundColor(.appTextPrimary)
 
                 Spacer()
 
                 if selectedValue == value {
                     Image(systemName: "checkmark")
-                        .foregroundColor(.blue)
+                        .foregroundColor(.appPrimary)
                         .fontWeight(.semibold)
                 }
             }

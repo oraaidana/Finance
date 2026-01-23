@@ -16,13 +16,13 @@ struct OnboardingView: View {
             title: "Track Your Expenses",
             description: "Easily monitor your spending and income with our intuitive interface",
             imageName: "chart.pie.fill",
-            color: .blue
+            color: .appPrimary
         ),
         OnboardingPage(
             title: "Smart Budget Planning",
             description: "Set budgets and get insights to help you save money and reach your goals",
             imageName: "dollarsign.circle.fill",
-            color: .green
+            color: .appIncome
         ),
         OnboardingPage(
             title: "AI-Powered Insights",
@@ -35,7 +35,7 @@ struct OnboardingView: View {
     var body: some View {
         ZStack {
             // Background
-            Color.white
+            Color.appCardBackground
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
@@ -74,13 +74,13 @@ struct OnboardingView: View {
                     HStack(spacing: 8) {
                         ForEach(0..<pages.count, id: \.self) { index in
                             Circle()
-                                .fill(index == currentPage ? Color.blue : Color.gray.opacity(0.3))
+                                .fill(index == currentPage ? Color.appPrimary : Color.gray.opacity(0.3))
                                 .frame(width: index == currentPage ? 10 : 8, height: index == currentPage ? 10 : 8)
                                 .animation(.spring(response: 0.3, dampingFraction: 0.7), value: currentPage)
                         }
                     }
                     .padding(.top, 20)
-                    
+
                     // Next/Get Started button
                     Button(action: {
                         if currentPage < pages.count - 1 {
@@ -96,7 +96,7 @@ struct OnboardingView: View {
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 16)
-                            .background(Color.blue)
+                            .background(Color.appPrimary)
                             .cornerRadius(12)
                     }
                     .padding(.horizontal, 30)

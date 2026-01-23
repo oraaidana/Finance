@@ -18,7 +18,7 @@ struct LoginView: View {
         NavigationView {
             ZStack {
                 // Background
-                Color(.systemGray6)
+                Color.appBackground
                     .ignoresSafeArea()
                 
                 ScrollView {
@@ -41,7 +41,7 @@ struct LoginView: View {
                                 TextField("Enter your email", text: $email)
                                     .textFieldStyle(PlainTextFieldStyle())
                                     .padding()
-                                    .background(Color(.systemGray6))
+                                    .background(Color.appBackground)
                                     .cornerRadius(10)
                                     .keyboardType(.emailAddress)
                                     .autocapitalization(.none)
@@ -66,12 +66,13 @@ struct LoginView: View {
                                         Image(systemName: showPassword ? "eye.slash.fill" : "eye.fill")
                                             .foregroundColor(.gray)
                                     }
+                                    .buttonStyle(.plain)
                                 }
                                 .padding()
-                                .background(Color(.systemGray6))
+                                .background(Color.appBackground)
                                 .cornerRadius(10)
                             }
-                            
+
                             // Remember me and Forgot password
                             HStack {
                                 Button(action: {
@@ -79,19 +80,20 @@ struct LoginView: View {
                                 }) {
                                     HStack(spacing: 8) {
                                         Image(systemName: rememberMe ? "checkmark.square.fill" : "square")
-                                            .foregroundColor(rememberMe ? .blue : .gray)
+                                            .foregroundColor(rememberMe ? .appPrimary : .gray)
                                         Text("Remember me")
                                             .font(.system(size: 14))
-                                            .foregroundColor(.secondary)
+                                            .foregroundColor(.appTextSecondary)
                                     }
                                 }
-                                
+                                .buttonStyle(.plain)
+
                                 Spacer()
-                                
+
                                 NavigationLink(destination: ForgotPasswordView()) {
                                     Text("Forgot password?")
                                         .font(.system(size: 14, weight: .medium))
-                                        .foregroundColor(.blue)
+                                        .foregroundColor(.appPrimary)
                                 }
                             }
                             
@@ -99,7 +101,7 @@ struct LoginView: View {
                             if let errorMessage = authManager.errorMessage {
                                 Text(errorMessage)
                                     .font(.system(size: 14))
-                                    .foregroundColor(.red)
+                                    .foregroundColor(.appError)
                                     .padding(.horizontal)
                                     .multilineTextAlignment(.center)
                             }
@@ -119,9 +121,10 @@ struct LoginView: View {
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 16)
-                                .background(Color.blue)
+                                .background(Color.appPrimary)
                                 .cornerRadius(12)
                             }
+                            .buttonStyle(.plain)
                             .padding(.top, 8)
                             .disabled(authManager.isLoading || email.isEmpty || password.isEmpty)
                             .opacity((authManager.isLoading || email.isEmpty || password.isEmpty) ? 0.6 : 1.0)
@@ -130,7 +133,7 @@ struct LoginView: View {
                             VStack(spacing: 16) {
                                 Text("Or Sign in with")
                                     .font(.system(size: 14))
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(.appTextSecondary)
                                 
                                 HStack(spacing: 20) {
                                     // Facebook
@@ -139,48 +142,51 @@ struct LoginView: View {
                                     }) {
                                         ZStack {
                                             Circle()
-                                                .fill(Color(.systemGray5))
+                                                .fill(Color.appSecondary)
                                                 .frame(width: 50, height: 50)
                                             Text("f")
                                                 .font(.system(size: 24, weight: .bold))
-                                                .foregroundColor(.blue)
+                                                .foregroundColor(.appPrimary)
                                         }
                                     }
-                                    
+                                    .buttonStyle(.plain)
+
                                     // Google
                                     Button(action: {
                                         // Handle Google login
                                     }) {
                                         ZStack {
                                             Circle()
-                                                .fill(Color(.systemGray5))
+                                                .fill(Color.appSecondary)
                                                 .frame(width: 50, height: 50)
                                             Text("G")
                                                 .font(.system(size: 20, weight: .bold))
-                                                .foregroundColor(.red)
+                                                .foregroundColor(.appExpense)
                                         }
                                     }
-                                    
+                                    .buttonStyle(.plain)
+
                                     // Apple
                                     Button(action: {
                                         // Handle Apple login
                                     }) {
                                         ZStack {
                                             Circle()
-                                                .fill(Color(.systemGray5))
+                                                .fill(Color.appSecondary)
                                                 .frame(width: 50, height: 50)
                                             Image(systemName: "applelogo")
                                                 .font(.system(size: 20, weight: .semibold))
-                                                .foregroundColor(.primary)
+                                                .foregroundColor(.appTextPrimary)
                                         }
                                     }
+                                    .buttonStyle(.plain)
                                 }
                             }
                             .padding(.top, 20)
                             .padding(.bottom, 40)
                         }
                         .padding(.horizontal, 30)
-                        .background(Color.white)
+                        .background(Color.appCardBackground)
                         .cornerRadius(20)
                         .padding(.horizontal, 20)
                         .padding(.top, 40)
@@ -189,12 +195,12 @@ struct LoginView: View {
                         HStack {
                             Text("Don't have an account?")
                                 .font(.system(size: 14))
-                                .foregroundColor(.secondary)
-                            
+                                .foregroundColor(.appTextSecondary)
+
                             NavigationLink(destination: RegisterView()) {
                                 Text("Sign Up")
                                     .font(.system(size: 14, weight: .semibold))
-                                    .foregroundColor(.blue)
+                                    .foregroundColor(.appPrimary)
                             }
                         }
                         .padding(.top, 30)
@@ -207,7 +213,7 @@ struct LoginView: View {
                 ToolbarItem(placement: .principal) {
                     Text("QarzhyAI")
                         .font(.system(size: 24, weight: .bold))
-                        .foregroundColor(Color(red: 0.0, green: 0.2, blue: 0.5))
+                        .foregroundColor(.appPrimary)
                 }
             }
             .onAppear {

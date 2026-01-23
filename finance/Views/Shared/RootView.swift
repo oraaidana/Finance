@@ -88,6 +88,10 @@ struct RootView: View {
         }
         .onChange(of: authManager.currentUser) { oldValue, newValue in
             // When currentUser changes, check if we need to show verification screen
+            // Skip if already in main state (e.g., profile updates shouldn't trigger navigation)
+            if appState == .main {
+                return
+            }
             if let user = newValue, authManager.isAuthenticated {
                 if !user.isEmailVerified && appState != .emailVerification {
                     // User is authenticated but email not verified

@@ -19,7 +19,7 @@ struct RegisterView: View {
     var body: some View {
         ZStack {
             // Background
-            Color(.systemGray6)
+            Color.appBackground
                 .ignoresSafeArea()
             
             ScrollView {
@@ -37,35 +37,35 @@ struct RegisterView: View {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Name")
                                 .font(.system(size: 14, weight: .medium))
-                                .foregroundColor(.secondary)
-                            
+                                .foregroundColor(.appTextSecondary)
+
                             TextField("Enter your name", text: $name)
                                 .textFieldStyle(PlainTextFieldStyle())
                                 .padding()
-                                .background(Color(.systemGray6))
+                                .background(Color.appBackground)
                                 .cornerRadius(10)
                         }
-                        
+
                         // Email field
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Email")
                                 .font(.system(size: 14, weight: .medium))
-                                .foregroundColor(.secondary)
-                            
+                                .foregroundColor(.appTextSecondary)
+
                             TextField("Enter your email", text: $email)
                                 .textFieldStyle(PlainTextFieldStyle())
                                 .padding()
-                                .background(Color(.systemGray6))
+                                .background(Color.appBackground)
                                 .cornerRadius(10)
                                 .keyboardType(.emailAddress)
                                 .autocapitalization(.none)
                         }
-                        
+
                         // Password field
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Password")
                                 .font(.system(size: 14, weight: .medium))
-                                .foregroundColor(.secondary)
+                                .foregroundColor(.appTextSecondary)
                             
                             HStack {
                                 if showPassword {
@@ -80,42 +80,40 @@ struct RegisterView: View {
                                     Image(systemName: showPassword ? "eye.slash.fill" : "eye.fill")
                                         .foregroundColor(.gray)
                                 }
+                                .buttonStyle(.plain)
                             }
                             .padding()
-                            .background(Color(.systemGray6))
+                            .background(Color.appBackground)
                             .cornerRadius(10)
                         }
-                        
+
                         // Terms of Service
                         Button(action: {
                             agreeToTerms.toggle()
                         }) {
                             HStack(spacing: 8) {
                                 Image(systemName: agreeToTerms ? "checkmark.square.fill" : "square")
-                                    .foregroundColor(agreeToTerms ? .blue : .gray)
-                                
+                                    .foregroundColor(agreeToTerms ? .appPrimary : .gray)
+
                                 HStack(spacing: 4) {
                                     Text("I agree to the")
                                         .font(.system(size: 14))
-                                        .foregroundColor(.secondary)
-                                    
-                                    Button(action: {
-                                        // Handle Terms of Service
-                                    }) {
-                                        Text("Terms of Service")
-                                            .font(.system(size: 14, weight: .medium))
-                                            .foregroundColor(.blue)
-                                    }
+                                        .foregroundColor(.appTextSecondary)
+
+                                    Text("Terms of Service")
+                                        .font(.system(size: 14, weight: .medium))
+                                        .foregroundColor(.appPrimary)
                                 }
                             }
                         }
+                        .buttonStyle(.plain)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         
                         // Error message display
                         if let errorMessage = authManager.errorMessage {
                             Text(errorMessage)
                                 .font(.system(size: 14))
-                                .foregroundColor(.red)
+                                .foregroundColor(.appError)
                                 .padding(.horizontal)
                                 .multilineTextAlignment(.center)
                         }
@@ -135,18 +133,19 @@ struct RegisterView: View {
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 16)
-                            .background(Color.blue)
+                            .background(Color.appPrimary)
                             .cornerRadius(12)
                         }
+                        .buttonStyle(.plain)
                         .padding(.top, 8)
                         .disabled(!agreeToTerms || name.isEmpty || email.isEmpty || password.isEmpty || authManager.isLoading)
                         .opacity((!agreeToTerms || name.isEmpty || email.isEmpty || password.isEmpty || authManager.isLoading) ? 0.6 : 1.0)
-                        
+
                         // Social login section
                         VStack(spacing: 16) {
                             Text("Or Sign in with")
                                 .font(.system(size: 14))
-                                .foregroundColor(.secondary)
+                                .foregroundColor(.appTextSecondary)
                             
                             HStack(spacing: 20) {
                                 // Facebook
@@ -155,91 +154,71 @@ struct RegisterView: View {
                                 }) {
                                     ZStack {
                                         Circle()
-                                            .fill(Color(.systemGray5))
+                                            .fill(Color.appSecondary)
                                             .frame(width: 50, height: 50)
                                         Text("f")
                                             .font(.system(size: 24, weight: .bold))
-                                            .foregroundColor(.blue)
+                                            .foregroundColor(.appPrimary)
                                     }
                                 }
-                                
+                                .buttonStyle(.plain)
+
                                 // Google
                                 Button(action: {
                                     // Handle Google login
                                 }) {
                                     ZStack {
                                         Circle()
-                                            .fill(Color(.systemGray5))
+                                            .fill(Color.appSecondary)
                                             .frame(width: 50, height: 50)
                                         Text("G")
                                             .font(.system(size: 20, weight: .bold))
-                                            .foregroundColor(.red)
+                                            .foregroundColor(.appExpense)
                                     }
                                 }
-                                
+                                .buttonStyle(.plain)
+
                                 // Apple
                                 Button(action: {
                                     // Handle Apple login
                                 }) {
                                     ZStack {
                                         Circle()
-                                            .fill(Color(.systemGray5))
+                                            .fill(Color.appSecondary)
                                             .frame(width: 50, height: 50)
                                         Image(systemName: "applelogo")
                                             .font(.system(size: 20, weight: .semibold))
-                                            .foregroundColor(.primary)
+                                            .foregroundColor(.appTextPrimary)
                                     }
                                 }
+                                .buttonStyle(.plain)
                             }
                         }
                         .padding(.top, 20)
-                        
+
                         // Login link - moved inside the card
                         HStack {
                             Text("Already have an account?")
                                 .font(.system(size: 14))
-                                .foregroundColor(.secondary)
-                            
+                                .foregroundColor(.appTextSecondary)
+
                             Button(action: {
                                 dismiss()
                             }) {
                                 Text("Login")
                                     .font(.system(size: 14, weight: .semibold))
-                                    .foregroundColor(.blue)
+                                    .foregroundColor(.appPrimary)
                             }
+                            .buttonStyle(.plain)
                         }
                         .padding(.top, 16)
                         .padding(.bottom, 30)
                     }
                     .padding(.horizontal, 30)
-                    .background(Color.white)
+                    .background(Color.appCardBackground)
                     .cornerRadius(20)
                     .padding(.horizontal, 20)
                     .padding(.top, 40)
-                    //     .padding(.bottom, 40)
-                    // }
-                    // .padding(.horizontal, 30)
-                    // .background(Color.white)
-                    // .cornerRadius(20)
-                    // .padding(.horizontal, 20)
-                    // .padding(.top, 40)
-                    
-                    // // Login link
-                    // HStack {
-                    //     Text("Already have an account?")
-                    //         .font(.system(size: 14))
-                    //         .foregroundColor(.secondary)
-                        
-                    //     Button(action: {
-                    //         dismiss()
-                    //     }) {
-                    //         Text("Login")
-                    //             .font(.system(size: 14, weight: .semibold))
-                    //             .foregroundColor(.blue)
-                    //     }
-                    // }
-                    // .padding(.top, 30)
-                    // .padding(.bottom, 40)
                 }
             }
         }
@@ -249,7 +228,7 @@ struct RegisterView: View {
             ToolbarItem(placement: .principal) {
                 Text("QarzhyAI")
                     .font(.system(size: 24, weight: .bold))
-                    .foregroundColor(Color(red: 0.0, green: 0.2, blue: 0.5))
+                    .foregroundColor(.appPrimary)
             }
         }
         .onAppear {

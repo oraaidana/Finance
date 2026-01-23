@@ -13,7 +13,7 @@ struct ContentView: View {
     var body: some View {
         TabView {
             // Home - Main dashboard with transactions
-            DashboardView()
+            HomeView()
                 .tabItem {
                     Image(systemName: "house.fill")
                     Text("Home")
@@ -40,7 +40,7 @@ struct ContentView: View {
                     Text("Profile")
                 }
         }
-        .accentColor(.blue)
+        .accentColor(.appPrimary)
         .preferredColorScheme(themeManager.colorScheme)
     }
 }

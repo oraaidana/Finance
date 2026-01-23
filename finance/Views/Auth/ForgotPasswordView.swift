@@ -16,7 +16,7 @@ struct ForgotPasswordView: View {
     var body: some View {
         ZStack {
             // Background
-            Color(.systemGray6)
+            Color.appBackground
                 .ignoresSafeArea()
             
             ScrollView {
@@ -26,7 +26,7 @@ struct ForgotPasswordView: View {
                         // Icon
                         Image(systemName: "lock.rotation")
                             .font(.system(size: 80, weight: .light))
-                            .foregroundColor(.blue)
+                            .foregroundColor(.appPrimary)
                             .padding(.top, 40)
                         
                         // Title
@@ -55,12 +55,12 @@ struct ForgotPasswordView: View {
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("Email")
                                     .font(.system(size: 14, weight: .medium))
-                                    .foregroundColor(.secondary)
-                                
+                                    .foregroundColor(.appTextSecondary)
+
                                 TextField("Enter your email", text: $email)
                                     .textFieldStyle(PlainTextFieldStyle())
                                     .padding()
-                                    .background(Color(.systemGray6))
+                                    .background(Color.appBackground)
                                     .cornerRadius(10)
                                     .keyboardType(.emailAddress)
                                     .autocapitalization(.none)
@@ -71,7 +71,7 @@ struct ForgotPasswordView: View {
                             if let errorMessage = authManager.errorMessage {
                                 Text(errorMessage)
                                     .font(.system(size: 14))
-                                    .foregroundColor(.red)
+                                    .foregroundColor(.appError)
                                     .padding(.horizontal)
                                     .multilineTextAlignment(.center)
                             }
@@ -91,7 +91,7 @@ struct ForgotPasswordView: View {
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 16)
-                                .background(Color.blue)
+                                .background(Color.appPrimary)
                                 .cornerRadius(12)
                             }
                             .padding(.top, 8)
@@ -101,9 +101,9 @@ struct ForgotPasswordView: View {
                             // Success state
                             Image(systemName: "checkmark.circle.fill")
                                 .font(.system(size: 60))
-                                .foregroundColor(.green)
+                                .foregroundColor(.appSuccess)
                                 .padding(.top, 20)
-                            
+
                             // Back to Login button
                             Button(action: {
                                 dismiss()
@@ -113,7 +113,7 @@ struct ForgotPasswordView: View {
                                     .foregroundColor(.white)
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 16)
-                                    .background(Color.blue)
+                                    .background(Color.appPrimary)
                                     .cornerRadius(12)
                             }
                             .padding(.top, 20)
@@ -121,7 +121,7 @@ struct ForgotPasswordView: View {
                     }
                     .padding(.horizontal, 30)
                     .padding(.vertical, 40)
-                    .background(Color.white)
+                    .background(Color.appCardBackground)
                     .cornerRadius(20)
                     .padding(.horizontal, 20)
                     .padding(.top, 40)
@@ -133,7 +133,7 @@ struct ForgotPasswordView: View {
             ToolbarItem(placement: .principal) {
                 Text("QarzhyAI")
                     .font(.system(size: 24, weight: .bold))
-                    .foregroundColor(Color(red: 0.0, green: 0.2, blue: 0.5))
+                    .foregroundColor(.appPrimary)
             }
         }
         .onAppear {
