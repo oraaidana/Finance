@@ -1,40 +1,59 @@
+############################
 # Xcode
+############################
+
+# Build results
 build/
 DerivedData/
+
+# User-specific Xcode files
+xcuserdata/
 *.xcuserstate
 *.xccheckout
 *.xcscmblueprint
 *.moved-aside
 *.hmap
-*.ipa
-*.dSYM.zip
-*.dSYM
 
-# User-specific Xcode files
-xcuserdata/
-*.xcworkspace/xcuserdata/
+# Playgrounds
+timeline.xctimeline
+playground.xcworkspace
 
+############################
 # Swift Package Manager
+############################
+
 .build/
+.swiftpm/
 Packages/
 Package.resolved
-.swiftpm/
 
+############################
 # CocoaPods
-Pods/
-*.xcworkspace
+############################
 
+Pods/
+# IMPORTANT: do NOT ignore .xcworkspace
+
+############################
 # Carthage
+############################
+
 Carthage/Build/
 Carthage/Checkouts/
 
+############################
 # fastlane
+############################
+
 fastlane/report.xml
 fastlane/Preview.html
-fastlane/screenshots/**/*.png
-fastlane/test_output
+fastlane/screenshots/
+fastlane/test_output/
 
+############################
 # macOS
+############################
+
 .DS_Store
 .AppleDouble
 .LSOverride
@@ -42,24 +61,28 @@ fastlane/test_output
 .Spotlight-V100
 .Trashes
 
-# IDE
+############################
+# IDEs
+############################
+
+.idea/
+*.iml
 *.swp
 *.swo
 *~
-.idea/
-*.iml
 
-# Firebase
-GoogleService-Info.plist
+############################
+# Certificates & Secrets
+############################
 
-# Environment and secrets
 .env
 .env.*
 *.pem
 *.p12
 *.key
 
-# Project-specific
-specs/
-CLAUDE.md
+############################
+# Firebase
+############################
 
+GoogleService-Info.plist
