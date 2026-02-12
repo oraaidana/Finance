@@ -34,6 +34,10 @@ class HomeViewModel: ObservableObject {
         !cardManager.cards.isEmpty
     }
 
+    var selectedCard: Card? {
+        cardManager.cards[safe: selectedCardIndex]
+    }
+
     var totalIncome: Double {
         dataManager.totalIncome
     }
@@ -115,6 +119,10 @@ class HomeViewModel: ObservableObject {
 
     func deleteTransaction(_ transaction: Transaction) {
         dataManager.deleteTransaction(transaction)
+    }
+
+    func addCard(_ card: Card) {
+        cardManager.addCard(card)
     }
 
     func clearSearch() {

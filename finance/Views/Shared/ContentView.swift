@@ -19,6 +19,13 @@ struct ContentView: View {
                     Text("Home")
                 }
 
+            // Transactions - Transaction list
+            TransactionsView()
+                .tabItem {
+                    Image(systemName: "list.bullet.rectangle")
+                    Text("Transactions")
+                }
+
             // Analytics - Charts and insights
             AnalyticsView()
                 .tabItem {
@@ -31,13 +38,6 @@ struct ContentView: View {
                 .tabItem {
                     Image(systemName: "message.fill")
                     Text("Chat")
-                }
-
-            // Profile - User settings
-            ProfileView()
-                .tabItem {
-                    Image(systemName: "person.fill")
-                    Text("Profile")
                 }
         }
         .accentColor(.appPrimary)

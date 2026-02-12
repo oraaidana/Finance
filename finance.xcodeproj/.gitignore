@@ -7,9 +7,12 @@ build/
 DerivedData/
 
 # User-specific Xcode files
+*.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
 xcuserdata/
 *.xcuserstate
 *.xccheckout
+*.xcbkptlist
 *.xcscmblueprint
 *.moved-aside
 *.hmap
@@ -85,4 +88,5 @@ fastlane/test_output/
 # Firebase
 ############################
 
+specs/
 GoogleService-Info.plist

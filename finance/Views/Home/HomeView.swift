@@ -12,41 +12,52 @@ import Charts
 struct HomeView: View {
     @EnvironmentObject var dataManager: SharedDataManager
     @StateObject private var viewModel: HomeViewModel
-    @State private var isAccountsExpanded: Bool = true
+    @StateObject private var authManager = AuthManager.shared
+    @State private var showingAccountPicker: Bool = false
 
     init(viewModel: HomeViewModel? = nil) {
         _viewModel = StateObject(wrappedValue: viewModel ?? HomeViewModel(dataManager: SharedDataManager()))
     }
 
+    private var avatarInitial: String {
+        let name = authManager.currentUser?.name ?? ""
+        if name.isEmpty {
+            let email = authManager.currentUser?.email ?? ""
+            return String(email.prefix(1)).uppercased()
+        }
+        return String(name.prefix(1)).uppercased()
+    }
+
+    private var currentDayFormatted: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE, MMM d"
+        return formatter.string(from: Date())
+    }
+
     var body: some View {
         NavigationView {
-            ZStack(alignment: .bottomTrailing) {
-                ScrollView {
-                    VStack(spacing: 20) {
-                        // Cards carousel
-                        cardsSection
+            ScrollView {
+                VStack(spacing: 20) {
+                    // Custom App Bar
+                    customAppBar
+                    
+                    
 
-                        // Quick Stats Cards
-                        quickStatsSection
-
-                        // Spending by Category Chart
-                        spendingChartSection
-
-                        // Search Bar
-                        searchBarSection
-
-                        // Recent Transactions
-                        recentTransactionsSection
-                    }
-                    .padding()
-                    .padding(.bottom, 80) // Space for FAB
+//                    // Quick Stats Cards
+//                    quickStatsSection
+//
+//                    // Spending by Category Chart
+//                    spendingChartSection
+//
+//                    // Search Bar
+//                    searchBarSection
+//
+//                    // Recent Transactions
+//                    recentTransactionsSection
                 }
-
-                // Floating Action Button
-                floatingActionButton
+                .padding()
             }
-            .navigationTitle("Home")
-            .background(Color.appBackground)
+            .navigationBarHidden(true)
             .fullScreenCover(isPresented: $viewModel.showingAddTransaction) {
                 AddTransactionView { newTransaction in
                     viewModel.addTransaction(newTransaction)
@@ -68,113 +79,115 @@ struct HomeView: View {
             .sheet(isPresented: $viewModel.showingImportStatement) {
                 BankStatementUploadView()
             }
+            .sheet(isPresented: $showingAccountPicker) {
+                AccountPickerView(
+                    selectedIndex: $viewModel.selectedCardIndex,
+                    formatCurrency: viewModel.formatCurrency
+                )
+            }
         }
     }
 
-    // MARK: - Floating Action Button
-    private var floatingActionButton: some View {
-        Button(action: { viewModel.showingAddTransaction = true }) {
-            Image(systemName: "plus")
-                .font(.title2)
-                .fontWeight(.semibold)
-                .foregroundColor(.white)
-                .frame(width: 56, height: 56)
-                .background(Color.appPrimary)
-                .clipShape(Circle())
-                .shadow(color: Color.appShadow.opacity(0.5), radius: 8, x: 0, y: 4)
+    // MARK: - Account Selector Capsule
+    private var accountSelectorCapsule: some View {
+        let card = viewModel.selectedCard
+        let cardColor = card?.color.color ?? .pink
+        let cardIcon = card?.icon ?? "piggybank.fill"
+        let cardName = card?.name ?? "Все счета"
+        let cardBalance = card?.balance ?? viewModel.totalBalance
+
+        return Button(action: {
+            showingAccountPicker = true
+        }) {
+            HStack(spacing: 8) {
+                // Account icon (colored circle with icon)
+                ZStack {
+                    Circle()
+                        .fill(cardColor.opacity(0.2))
+                        .frame(width: 36, height: 36)
+                    Image(systemName: cardIcon)
+                        .font(.system(size: 16))
+                        .foregroundColor(cardColor)
+                }
+
+                // Account info (name + balance)
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(cardName)
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundColor(.primary)
+                        .lineLimit(1)
+                    Text(viewModel.formatCurrency(cardBalance))
+                        .font(.system(size: 11))
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                }
+                .fixedSize(horizontal: true, vertical: false)
+            }
+            .padding(.leading, 4)
+            .padding(.trailing, 12)
+            .padding(.vertical, 4)
+            .background(Color(.systemBackground))
+            .clipShape(Capsule())
+            .overlay(
+                Capsule()
+                    .stroke(Color.black.opacity(0.1), lineWidth: 1)
+            )
         }
         .buttonStyle(.plain)
-        .padding(.trailing, 20)
-        .padding(.bottom, 20)
     }
 
-    // MARK: - Accounts Section
-    private var cardsSection: some View {
-        VStack(spacing: 0) {
-            // Header
-            HStack {
-                Text("Accounts")
-                    .font(.headline)
-                    .foregroundColor(.appTextPrimary)
+    // MARK: - Custom App Bar
+    private var customAppBar: some View {
+        HStack(spacing: 8) {
+            // Account selector capsule
+            accountSelectorCapsule
 
-                Spacer()
-
-                // Add card button
-                Button(action: {
-                    // TODO: Implement add card
-                }) {
-                    Image(systemName: "plus")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.appTextSecondary)
-                        .frame(width: 28, height: 28)
-                        .background(Color.appSecondary)
-                        .clipShape(Circle())
-                }
-                .buttonStyle(.plain)
-
-                // Expand/collapse button
-                Button(action: {
-                    withAnimation(.easeInOut(duration: 0.25)) {
-                        isAccountsExpanded.toggle()
-                    }
-                }) {
-                    Image(systemName: "chevron.up")
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(.appTextSecondary)
-                        .frame(width: 28, height: 28)
-                        .background(Color.appSecondary)
-                        .clipShape(Circle())
-                        .rotationEffect(.degrees(isAccountsExpanded ? 0 : 180))
-                }
-                .buttonStyle(.plain)
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-
-            // Accounts list
-            if isAccountsExpanded {
-                if !viewModel.hasCards {
-                    emptyAccountsPlaceholder
-                } else {
-                    VStack(spacing: 0) {
-                        ForEach(Array(viewModel.cards.enumerated()), id: \.element.id) { index, card in
-                            AccountRow(
-                                card: card,
-                                isSelected: viewModel.selectedCardIndex == index
-                            )
-                            .onTapGesture {
-                                viewModel.selectedCardIndex = index
-                            }
-
-                            if index < viewModel.cards.count - 1 {
-                                Divider()
-                                    .background(Color.appSecondary)
-                                    .padding(.leading, 56)
-                            }
-                        }
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 12)
-                }
-            }
-        }
-        .background(Color.appCardBackground)
-        .cornerRadius(16)
-    }
-
-    // MARK: - Empty Accounts Placeholder
-    private var emptyAccountsPlaceholder: some View {
-        HStack {
-            Image(systemName: "creditcard")
-                .font(.title2)
-                .foregroundColor(.appTextSecondary)
-            Text("No accounts yet")
-                .font(.subheadline)
-                .foregroundColor(.appTextSecondary)
             Spacer()
+
+            // History button
+            Button(action: {
+                // TODO: Show history
+            }) {
+                Image(systemName: "clock")
+                    .font(.system(size: 20))
+                    .foregroundColor(.primary)
+                    .frame(width: 44, height: 44)
+                    .background(Color(.systemBackground))
+                    .clipShape(Circle())
+                    .overlay(
+                        Circle()
+                            .stroke(Color.black.opacity(0.1), lineWidth: 1)
+                    )
+            }
+
+            // Analytics/Coins button
+            NavigationLink(destination: AnalyticsView()) {
+                Image(systemName: "cylinder.split.1x2")
+                    .font(.system(size: 20))
+                    .foregroundColor(.primary)
+                    .frame(width: 44, height: 44)
+                    .background(Color(.systemBackground))
+                    .clipShape(Circle())
+                    .overlay(
+                        Circle()
+                            .stroke(Color.black.opacity(0.1), lineWidth: 1)
+                    )
+            }
+
+            // Settings button
+            NavigationLink(destination: ProfileView()) {
+                Image(systemName: "gearshape")
+                    .font(.system(size: 20))
+                    .foregroundColor(.primary)
+                    .frame(width: 44, height: 44)
+                    .background(Color(.systemBackground))
+                    .clipShape(Circle())
+                    .overlay(
+                        Circle()
+                            .stroke(Color.black.opacity(0.1), lineWidth: 1)
+                    )
+            }
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 16)
     }
 
     // MARK: - Quick Stats Section
