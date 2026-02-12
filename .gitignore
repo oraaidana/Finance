@@ -1,2 +1,90 @@
+############################
+# Xcode
+############################
+
+# Build results
+build/
+DerivedData/
+
+# User-specific Xcode files
 xcuserdata/
 *.xcuserstate
+*.xccheckout
+*.xcbkptlist
+*.xcscmblueprint
+*.moved-aside
+*.hmap
+
+# Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+Untitled*
+
+############################
+# Swift Package Manager
+############################
+
+.build/
+.swiftpm/
+Packages/
+
+############################
+# CocoaPods
+############################
+
+Pods/
+
+############################
+# Carthage
+############################
+
+Carthage/Build/
+Carthage/Checkouts/
+
+############################
+# fastlane
+############################
+
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/
+fastlane/test_output/
+
+############################
+# macOS
+############################
+
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+############################
+# IDEs
+############################
+
+.idea/
+*.iml
+*.swp
+*.swo
+*~
+
+############################
+# Secrets & Config
+############################
+
+.env
+.env.*
+*.pem
+*.p12
+*.key
+GoogleService-Info.plist
+
+############################
+# Project-specific
+############################
+
+specs/
+CLAUDE.md
